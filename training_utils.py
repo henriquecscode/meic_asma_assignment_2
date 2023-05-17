@@ -16,7 +16,7 @@ def handler(signum, frame):
 def setup_training_interrupt():
     signal.signal(signal.SIGINT, handler)
 
-def create_training_routine(model: BaseAlgorithm, path=""):
+def create_training_routine(model: BaseAlgorithm, path="", start = 0):
     if path == "":
         path = get_model_path(model, "", "")
 
@@ -25,7 +25,7 @@ def create_training_routine(model: BaseAlgorithm, path=""):
         episode_count = 1
         while(episodes != 0 and not stop_training):
             model.learn(timesteps, reset_num_timesteps=False, tb_log_name=path)
-            episode_path = f"{path}/{timesteps*episode_count}"
+            episode_path = f"{path}/{start + timesteps*episode_count}"
             save_model_to(model, episode_path)
             episodes -= 1
             episode_count += 1
@@ -34,3 +34,9 @@ def create_training_routine(model: BaseAlgorithm, path=""):
 
 
     return learning_routine
+
+def get_iterations(filepath):
+    filepath_parts = filepath.split(".")
+    iterations = filepath_parts[-2]
+    iterations = int(iterations)
+    return iterations
