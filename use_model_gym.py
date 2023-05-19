@@ -14,13 +14,13 @@ if __name__ == '__main__':
 
     env = gym.make(env_name)
     model = load_model(filename)
-
-    obs = env.reset()
-    done = False
-    while not done:
-        action, _state = model.predict(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
-        env.render()
+    while True:
+        obs = env.reset()
+        done = False
+        while not done:
+            action, _state = model.predict(obs, deterministic=True)
+            obs, reward, done, info = env.step(action)
+            env.render()
         # VecEnv resets automatically
         # if done:
         #   obs = vec_env.reset()
