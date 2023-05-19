@@ -43,6 +43,14 @@ gravity_max = -10.0
 gravity_inc = 1.0
 gravity_num = int(abs(gravity_max - gravity_min) / gravity_inc + 1)
 
+standard_params = {
+    "gravity": -10.0,
+    "max_thrust": 1.0,
+    "wind_power": 0.0,
+    "turbulence_power": 0.0,
+    "failure_rate": 0.0,
+    "byzantine_rate": 0.0
+}
 
 def _max_thrust_modification(max_thrust):
     env = get_wrapped_lunar_environment(continuous=True, max_thrust=max_thrust)
@@ -78,16 +86,56 @@ def _train_modified_env(env, env_name):
     model.learn(ITERATIONS, tb_log_name=path)
     return model
 
+def parameters_is_standard(params):
+    for key in params:
+        if params[key] != standard_params[key]:
+            return False
+    return True
 
-def get_modified_parameters():
-    standard_params = {
-        "gravity": -10.0,
-        "max_thrust": 1.0,
-        "wind_power": 0.0,
-        "turbulence_power": 0.0,
-        "failure_rate": 0.0,
-        "byzantine_rate": 0.0
-    }
+def get_single_variable_parameters():
+
+    all_params = []
+    for gravity in np.linspace(gravity_min, gravity_max, gravity_num):
+        params = {
+            "gravity": gravity,
+        }
+        all_params.append(params)
+    for max_thrust in np.linspace(max_thrust_max, max_thurst_min, max_thrust_num):
+        params = {
+            "max_thrust": max_thrust,
+        }
+        all_params.append(params)
+
+    for wind_power in np.linspace(wind_power_min, wind_power_max, wind_power_num):
+        params = {
+            "wind_power": wind_power,
+        }
+        all_params.append(params)
+
+    for turbulence_power in np.linspace(turbulence_power_min, turbulence_power_max, turbulence_power_num):
+        params = {
+            "turbulence_power": turbulence_power,
+        }
+        all_params.append(params)
+
+    for failure_rate in np.linspace(failure_rate_min, failure_rate_max, failure_rate_num):
+        params = {
+            "failure_rate": failure_rate,
+        }
+        all_params.append(params)
+
+    for byzantine_rate in np.linspace(byzantine_rate_min, byzantine_rate_max, byzantine_rate_num):
+        params = {
+            "byzantine_rate": byzantine_rate,
+        }
+        all_params.append(params)
+
+
+    filtered_all_params = list(filter(lambda x: not parameters_is_standard(x), all_params))
+    return [{}] + filtered_all_params
+
+
+def get_all_permutated_parameters():
     failure_params = []
     byzantine_params = []
 
@@ -123,6 +171,14 @@ def get_modified_parameters():
     params = [{}] + failure_params + byzantine_params
     return params
 
+modified_parameters_functions = get_all_permutated_parameters
+def set_modified_parameters_functions(func):
+    global modified_parameters_functions
+    modified_parameters_functions = func
+
+def get_modified_parameters():
+    return modified_parameters_functions()
+
 def get_envs():
     return [env for env in gen_envs()]
 
@@ -148,6 +204,7 @@ if __name__ == '__main__':
     # env, env_name = both_errors_modification(failure_rate, byzantine_rate)
     # model = train_modified_env(env, env_name)
     # use_model(model, env)
+    set_modified_parameters_functions(get_single_variable_parameters)
     params = get_modified_parameters()
     print(f"Number of environments: {len(params)}")
     consistent = True
@@ -161,7 +218,7 @@ if __name__ == '__main__':
             print(f"Env name is {env_name}")
             print(f"Params are {params}")
             print(f"New params are {new_params}")
-        print(f"Consistent env name is {new_params == params}")
+        print(f"Consistent env name {env_name} is {new_params == params}")
     # pass
     if consistent:
         print("modified_env_utils working")

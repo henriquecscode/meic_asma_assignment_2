@@ -60,6 +60,7 @@ def learn_all_models_threaded():
 
 
 if __name__ == '__main__':
+    set_modified_parameters_functions(get_single_variable_parameters)
     learn_all_models()
     # learn_all_models_threaded()
 print("Finished training all models")
