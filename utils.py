@@ -56,7 +56,45 @@ def get_model_type(filepath):
 
 def get_env(filename):
     filename_parts = filename.split("_")
-    if len(filename_parts) < 6:
-        return ""
-    env_name = filename_parts[6]
+    env_name = filename_parts[1]
     return env_name
+
+
+def get_float_to_str(x: float):
+    return str(x).replace(".", "-")
+
+
+def get_str_to_float(x: str):
+    return float(x.replace("-", "."))
+
+
+def get_env_name_from_params(params):
+
+    env_name = f"LunarLander-v2"
+    for key, value in params.items():
+        key = key.replace("_", "-")
+        if value < 0:
+            value = f"({get_float_to_str(abs(value))})"
+        else:
+            value = get_float_to_str(value)
+        env_name += f"---{key}--{value}"
+    return env_name
+
+
+def get_param_from_env_name(env_name):
+    # reverse of get_env_name_from_params
+    env_parts = env_name.split("---")
+    env_parts = env_parts[1:]  # Skip base environment name
+    params = {}
+    for env_part in env_parts:
+        key, value = env_part.split("--")
+        key = key.replace("-", "_")
+        value.replace("-", ".")
+        if value[0] == "(":
+            value = value[1:-1]
+            value = get_str_to_float(value) * -1
+        else:
+            value = get_str_to_float(value)
+        params[key] = value
+
+    return params
