@@ -1,6 +1,6 @@
 import datetime
 from stable_baselines3.common.base_class import BaseAlgorithm
-from stable_baselines3 import A2C, PPO
+from stable_baselines3 import A2C, DDPG, PPO, SAC, TD3
 import os
 MODELS_DIR = 'models/'
 LOGS_DIR = 'logs/'
@@ -13,11 +13,11 @@ if not os.path.exists(LOGS_DIR):
 
 
 def get_date():
-    return datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    return datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 
-def get_model_path(model: BaseAlgorithm, env_name, suffix=""):
-    return f"{get_date()}_{env_name}_{get_model_type_name(model)}_{suffix}"
+def get_model_path(model: BaseAlgorithm, env_name: str, suffix: str = ""):
+    return f"{get_date()}_{env_name}_{get_model_type_name(model)}{ '_'+suffix if suffix != '' else ''}"
 
 
 def get_model_type_name(model: BaseAlgorithm):
@@ -37,11 +37,16 @@ def save_model_to(model: BaseAlgorithm, file):
 def load_model(filename, env=None):
     filepath = f"{MODELS_DIR}{filename}"
     model_type = get_model_type(filepath)
-
     if model_type == "A2C":
         cls = A2C
+    elif model_type == "DDPG":
+        cls = DDPG
     elif model_type == "PPO":
         cls = PPO
+    elif model_type == "SAC":
+        cls = SAC
+    elif model_type == "TD3":
+        cls = TD3
 
     return cls.load(filepath, env)
 
@@ -98,3 +103,19 @@ def get_param_from_env_name(env_name):
         params[key] = value
 
     return params
+
+
+def use_model(model, env):
+    obs = env.reset()
+    done = False
+    while not done:
+        action, _state = model.predict(obs, deterministic=True)
+        obs, reward, done, info = env.step(action)
+        env.render()
+
+
+def get_models():
+    models = [
+        A2C, DDPG, PPO, SAC, TD3
+    ]
+    return models
