@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import sys
 models = get_models()
+is_verbose = False
 EPISODES = 15
 TIMESTEPS = 10000
 
@@ -26,16 +27,16 @@ if len(sys.argv) > 1:
             models = [models[idx]]
 
 
-def learn_all_models():
+def learn_all_models(verbose=False):
     for idx, (env, env_name) in enumerate(gen_envs()):
         if idx < start_env:
             continue
         for model_cls in models:
-            learn_model_env(model_cls, env, env_name)
+            learn_model_env(model_cls, env, env_name, verbose)
 
 
-def learn_model_env(model_cls, env, env_name):
-    model = model_cls("MlpPolicy", env, verbose=0,
+def learn_model_env(model_cls, env, env_name, verbose=False):
+    model = model_cls("MlpPolicy", env, verbose=verbose,
                       tensorboard_log=LOGS_DIR)
     path = get_model_path(model, env_name, "simple")
     learning_routine = create_training_routine(model, path)
@@ -60,7 +61,11 @@ def learn_all_models_threaded():
 
 
 if __name__ == '__main__':
+    verbose = False
+    if len(sys.argv) > 1:
+        for arg in sys.argv[1:]:
+            if arg == "--verbose":
+                verbose = True
     set_modified_parameters_functions(get_single_variable_parameters)
-    learn_all_models()
-    # learn_all_models_threaded()
+    learn_all_models(verbose)
 print("Finished training all models")
