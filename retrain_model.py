@@ -1,40 +1,55 @@
 from stable_baselines3 import A2C, PPO
-import gym
 from utils import *
 from training_utils import *
 import sys
-import os
+import math
 # Not working
+
+EPISODES = 15
+ITERATIONS = 10000
 
 filepath = ""
 iterations = 0
 if len(sys.argv) > 1:
     family_name = sys.argv[1]
-    if len(sys.argv) > 2:
-        iterations = sys.argv[2]
-        filepath = f"{family_name}/{iterations}"
-    else:
-        models_available = os.listdir(f"{MODELS_DIR}/{family_name}")
-        # Get maximum iterations from folder
-        # Open directory
-        # Get all files
-        # Get all files with .zip
-        models_available.sort()
-        filepath = models_available[-1]
-        iterations = get_iterations(filepath)
-        filepath = f"{family_name}/{iterations}"
-
-
-    env_name = get_env(filepath)
-    env = gym.make(env_name)
-    model = load_model(filepath, env)
+    model, env, family_name, iterations = get_model_env(family_name)
     path = family_name
 else:
-    env = "LunarLander-v2"
+    params = {}
+    env = get_wrapped_lunar_environment()
+    env_name = get_env_name_from_params(params)
     suffix = "simple"
     model = PPO("MlpPolicy", env, verbose=1, tensorboard_log=LOGS_DIR)
-    path = get_model_path(model, env, suffix)
+    path = get_model_path(model, env_name, suffix)
+    iterations = 0
+
+
+episodes = None
+episodeIterations = None
+totalIterations = None
+if len(sys.argv) > 2:
+    for arg in sys.argv[2:]:
+        # Args are of the type "--key=value"
+        key, value = arg.split("=")
+        if key == "--episodes":
+            episodes = int(value)
+        elif key == "--iterations":
+            episodeIterations = int(value)
+        elif key == "--totalIterations":
+            totalIterations = int(value) - iterations
+
+if totalIterations is not None:
+    if totalIterations <= 0: 
+        print("Model already fully trained.")
+        exit(0)
+    episodeIterations = ITERATIONS
+    episodes = math.ceil(totalIterations // ITERATIONS)
+else:
+    if episodes is None:
+        episodes = EPISODES
+    if episodeIterations is None:
+        episodeIterations = ITERATIONS
 
 routine = create_training_routine(model, path, iterations)
-setup_training_interrupt()
-routine(10, 10000)
+print(f"Retraining model from {path} starting on iteration {iterations}\nWill train for {episodes} episodes of {episodeIterations} iterations each")
+routine(episodes, episodeIterations)
