@@ -38,8 +38,3 @@ def  create_training_routine(model: BaseAlgorithm, path="", start=0):
 
     return learning_routine
 
-def get_iterations(filepath):
-    filepath_parts = filepath.split(".")
-    iterations = filepath_parts[-2]
-    iterations = int(iterations)
-    return iterations

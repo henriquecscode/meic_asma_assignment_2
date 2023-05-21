@@ -1,6 +1,7 @@
 import datetime
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3 import A2C, DDPG, PPO, SAC, TD3
+from modified_env import get_wrapped_lunar_environment
 import os
 MODELS_DIR = 'models/'
 LOGS_DIR = 'logs/'
@@ -119,3 +120,35 @@ def get_models():
         A2C, DDPG, PPO, SAC, TD3
     ]
     return models
+
+def get_iterations_from_model_name(filepath):
+    filepath_parts = filepath.split(".")
+    iterations = filepath_parts[0]
+    iterations = int(iterations)
+    return iterations
+
+def get_data_from_path(filepath):
+    filepath_parts = filepath.split("/")
+    family_name = filepath_parts[0]
+    if len(filepath_parts) > 1:
+        # Has iterations
+        iterations_parts = filepath_parts[-1].split(".")
+        iterations = int(iterations_parts[0])
+    else:
+        # Get maximum iterations from folder
+        # Open directory
+        # Get all files
+        models_available = os.listdir(f"{MODELS_DIR}{family_name}")
+        models_available_iterations = [get_iterations_from_model_name(x)  for x in models_available]
+        models_available_iterations.sort()
+        iterations = models_available_iterations[-1]
+    filename = f"{family_name}/{iterations}"
+    return filename, family_name, iterations
+
+def get_model_env(filepath) :
+    filename, family_name, iterations = get_data_from_path(filepath)
+    env_name = get_env(family_name)
+    env_params = get_param_from_env_name(env_name)
+    env = get_wrapped_lunar_environment(**env_params)
+    model = load_model(filename, env)
+    return model, env, family_name, iterations
