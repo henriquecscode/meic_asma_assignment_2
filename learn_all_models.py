@@ -4,18 +4,15 @@ from modified_env_utils import *
 from multiprocessing.pool import ThreadPool
 from multiprocessing import Pool
 from concurrent.futures import ThreadPoolExecutor
+from stable_baselines3.common.env_checker import check_env
 
 
 import sys
+start_env = 0
 models = get_models()
 is_verbose = False
 EPISODES = 15
 TIMESTEPS = 10000
-
-
-EPISODES = 15
-TIMESTEPS = 10000
-
 
 if len(sys.argv) > 1:
     start_env = int(sys.argv[1])
@@ -36,6 +33,7 @@ def learn_all_models(verbose=False):
 
 
 def learn_model_env(model_cls, env, env_name, verbose=False):
+    check_env(env)
     model = model_cls("MlpPolicy", env, verbose=verbose,
                       tensorboard_log=LOGS_DIR)
     path = get_model_path(model, env_name, "simple")
