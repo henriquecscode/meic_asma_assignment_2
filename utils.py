@@ -6,6 +6,7 @@ from modified_env_utils import get_param_from_env_name
 import os
 MODELS_DIR = 'models/'
 LOGS_DIR = 'logs/'
+MODELS = [A2C, DDPG, PPO, SAC, TD3]
 
 if not os.path.exists(MODELS_DIR):
     os.makedirs(MODELS_DIR)
@@ -39,16 +40,10 @@ def save_model_to(model: BaseAlgorithm, file):
 def load_model(filename, env=None):
     filepath = f"{MODELS_DIR}{filename}"
     model_type = get_model_type(filepath)
-    if model_type == "A2C":
-        cls = A2C
-    elif model_type == "DDPG":
-        cls = DDPG
-    elif model_type == "PPO":
-        cls = PPO
-    elif model_type == "SAC":
-        cls = SAC
-    elif model_type == "TD3":
-        cls = TD3
+    for model in MODELS:
+        if model.__name__ == model_type:
+            cls = model
+            break
 
     return cls.load(filepath, env)
 
@@ -76,10 +71,7 @@ def use_model(model, env):
 
 
 def get_models():
-    models = [
-        A2C, DDPG, PPO, SAC, TD3
-    ]
-    return models
+    return MODELS
 
 def get_iterations_from_model_name(filepath):
     filepath_parts = filepath.split(".")
