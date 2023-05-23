@@ -17,7 +17,7 @@ if len(sys.argv) > 1:
     path = family_name
 else:
     params = {}
-    env = get_wrapped_lunar_environment()
+    env = get_wrapped_lunar_environment(**params)
     env_name = get_env_name_from_params(params)
     suffix = "simple"
     model = PPO("MlpPolicy", env, verbose=1, tensorboard_log=LOGS_DIR)
