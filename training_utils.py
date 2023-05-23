@@ -1,5 +1,4 @@
-
-from utils import *
+from utils import save_model_to, get_model_path
 from stable_baselines3.common.base_class import BaseAlgorithm
 import signal
 import datetime

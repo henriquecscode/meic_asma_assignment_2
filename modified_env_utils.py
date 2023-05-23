@@ -1,8 +1,6 @@
 from modified_env import get_wrapped_lunar_environment
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
-from utils import *
-from training_utils import *
 import numpy as np
 
 ITERATIONS = 20000
@@ -78,13 +76,6 @@ def _both_errors_modification(failure_rate, byzantine_rate):
     env_name = f"LunarLander-v2-modified-failure-{failure_rate}-byzantine-{byzantine_rate}"
     return env, env_name
 
-
-def _train_modified_env(env, env_name):
-    check_env(env, warn=True)
-    model = PPO("MlpPolicy", env, verbose=1, tensorboard_log=LOGS_DIR)
-    path = get_model_path(model, env_name, "simple")
-    model.learn(ITERATIONS, tb_log_name=path)
-    return model
 
 def parameters_is_standard(params):
     for key in params:
