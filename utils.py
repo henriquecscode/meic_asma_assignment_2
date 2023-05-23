@@ -1,7 +1,7 @@
 import datetime
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3 import A2C, DDPG, PPO, SAC, TD3
-from modified_env import get_wrapped_lunar_environment
+from modified_env import get_wrapped_lunar_environment, get_environment_action_space, get_environment_observation_space
 from modified_env_utils import get_param_from_env_name
 import os
 MODELS_DIR = 'models/'
@@ -42,10 +42,19 @@ def load_model(filename, env=None):
     model_type = get_model_type(filepath)
     for model in MODELS:
         if model.__name__ == model_type:
-            cls = model
+            cls: BaseAlgorithm = model
             break
-
-    return cls.load(filepath, env)
+    try:
+        return cls.load(filepath, env)
+    except KeyError as e:
+            action_space = get_environment_action_space(env)
+            observation_space = get_environment_observation_space(env)
+            custom_objects = {
+                "action_space": action_space,
+                "observation_space": observation_space
+            }
+            return cls.load(filepath, env, custom_objects=custom_objects)
+        
 
 
 def get_model_type(filepath):

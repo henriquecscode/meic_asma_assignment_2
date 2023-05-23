@@ -92,6 +92,17 @@ def get_wrapped_lunar_environment(
     return env
 
 
+def get_environment_action_space(env=None):
+    if env is None:
+        return gym.spaces.Box(low=-1, high=1, shape=(2,), dtype=np.float32)
+    return env.action_space
+
+def get_environment_observation_space(env=None):
+    if env is None:
+        return gym.spaces.Box(low=-1, high=1, shape=(8,), dtype=np.float32)
+    return env.observation_space
+
+
 if __name__ == '__main__':
     env = get_wrapped_lunar_environment(failure_rate=0.1)
     print(env.action_space)
