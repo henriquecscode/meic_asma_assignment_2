@@ -2,6 +2,7 @@ import datetime
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3 import A2C, DDPG, PPO, SAC, TD3
 from modified_env import get_wrapped_lunar_environment
+from modified_env_utils import get_param_from_env_name
 import os
 MODELS_DIR = 'models/'
 LOGS_DIR = 'logs/'
@@ -72,39 +73,6 @@ def get_float_to_str(x: float):
 
 def get_str_to_float(x: str):
     return float(x.replace("-", "."))
-
-
-def get_env_name_from_params(params):
-
-    env_name = f"LunarLander-v2"
-    for key, value in params.items():
-        key = key.replace("_", "-")
-        if value < 0:
-            value = f"({get_float_to_str(abs(value))})"
-        else:
-            value = get_float_to_str(value)
-        env_name += f"---{key}--{value}"
-    return env_name
-
-
-def get_param_from_env_name(env_name):
-    # reverse of get_env_name_from_params
-    env_parts = env_name.split("---")
-    env_parts = env_parts[1:]  # Skip base environment name
-    params = {}
-    for env_part in env_parts:
-        key, value = env_part.split("--")
-        key = key.replace("-", "_")
-        value.replace("-", ".")
-        if value[0] == "(":
-            value = value[1:-1]
-            value = get_str_to_float(value) * -1
-        else:
-            value = get_str_to_float(value)
-        params[key] = value
-
-    return params
-
 
 def use_model(model, env):
     obs = env.reset()

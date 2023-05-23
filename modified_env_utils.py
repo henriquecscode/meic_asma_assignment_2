@@ -179,6 +179,40 @@ def set_modified_parameters_functions(func):
 def get_modified_parameters():
     return modified_parameters_functions()
 
+
+
+def get_env_name_from_params(params):
+
+    env_name = f"LunarLander-v2"
+    for key, value in params.items():
+        key = key.replace("_", "-")
+        if value < 0:
+            value = f"({get_float_to_str(abs(value))})"
+        else:
+            value = get_float_to_str(value)
+        env_name += f"---{key}--{value}"
+    return env_name
+
+
+def get_param_from_env_name(env_name):
+    # reverse of get_env_name_from_params
+    env_parts = env_name.split("---")
+    env_parts = env_parts[1:]  # Skip base environment name
+    params = {}
+    for env_part in env_parts:
+        key, value = env_part.split("--")
+        key = key.replace("-", "_")
+        value.replace("-", ".")
+        if value[0] == "(":
+            value = value[1:-1]
+            value = get_str_to_float(value) * -1
+        else:
+            value = get_str_to_float(value)
+        params[key] = value
+
+    return params
+
+
 def get_envs():
     return [env for env in gen_envs()]
 
