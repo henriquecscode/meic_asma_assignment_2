@@ -43,8 +43,9 @@ if totalIterations is not None:
     if totalIterations <= 0: 
         print("Model already fully trained.")
         exit(0)
-    episodeIterations = ITERATIONS
-    episodes = math.ceil(totalIterations // ITERATIONS)
+    if episodeIterations is None:
+        episodeIterations = ITERATIONS
+    episodes = math.ceil(totalIterations // episodeIterations)
 else:
     if episodes is None:
         episodes = EPISODES
