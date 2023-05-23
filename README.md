@@ -45,13 +45,15 @@ To get the standard environments you can use the functions
 * `get_envs` - list with the standard environments
 * `gen_multiple_envs` - Takes a integer n. Generator that, for each iteration, returns a list with n equal environments. Intended for parallelization.
 
-There are two standard sets of environments.
+There are three standard sets of environments.
 
 * Combinatoric variable modification - Changes all parameters of the environment at the same time
   * Default option
   * `get_all_permutated_parameters()` can be used to get the parameters list manually
 * One variable modification - Only changes one parameter of the environment at the same time
   * `get_single_variable_parameters()` can be used to get the parameters list manually
+* Standard environment 
+  * `get_standard_environment_parameters()` can be used to get the parameters list manually
 
 The function `set_modified_parameters_functions` can be called with any of the previous functions to change the standard environments that are retrieved in the env getters.
 

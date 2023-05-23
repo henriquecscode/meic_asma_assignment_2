@@ -162,6 +162,16 @@ def get_all_permutated_parameters():
     params = [{}] + failure_params + byzantine_params
     return params
 
+def get_standard_environment_parameters():
+    return [{}]
+
+def get_failure_rates_params():
+    return [
+        {'failure_rate': 0.05
+        },
+        {'failure_rate': 0.1}
+    ]
+
 modified_parameters_functions = get_all_permutated_parameters
 def set_modified_parameters_functions(func):
     global modified_parameters_functions
