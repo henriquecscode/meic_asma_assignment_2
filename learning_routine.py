@@ -1,7 +1,6 @@
 from stable_baselines3 import A2C, PPO
 from utils import *
 from training_utils import *
-# Not working
 
 env = "LunarLander-v2"
 suffix = "simple"

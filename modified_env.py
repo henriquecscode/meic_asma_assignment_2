@@ -3,8 +3,6 @@ import gym
 from envs.lunar_lander import LunarLander
 
 LUNAR_NAME = "LunarLander-v2"
-LUNAR_CONTINOUS_NAME = "LunarLanderContinuous-v2"
-ANT_NAME = "Ant-v3"
 
 def get_lunar_env(continuous: bool = False,
                   gravity: float = -10.0,
@@ -18,20 +16,6 @@ def get_lunar_env(continuous: bool = False,
         enable_wind=enable_wind,
         wind_power=wind_power,
         turbulence_power=turbulence_power)
-    # env = gym.make(LUNAR_NAME,
-    #                continuous=continuous,
-    #                gravity=gravity,
-    #                enable_wind=enable_wind,
-    #                wind_power=wind_power,
-    #                turbulence_power=turbulence_power)
-    # if not continuous:
-    #     env = gym.make(LUNAR_NAME)
-    # else:
-    #     env = gym.make(LUNAR_CONTINOUS_NAME,
-    #                    gravity=gravity,
-    #                    enable_wind=enable_wind,
-    #                    wind_power=wind_power,
-    #                    turbulence_power=turbulence_power)
     return env
 
 
