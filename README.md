@@ -15,6 +15,12 @@ The versions for each package MUST be:
 
 For running refer to the section [Training and using models](#training-and-using-models)
 
+## Logs visualization
+
+To analyse the data you must have tensorboard installed.
+Run `tensorboard --logdir=logs`
+
+
 ## Version compatibility
 
 In order to use features from the later versions of the Lunar Lander environment, the source code from version 0.24.0 was used. Adaptations had to be done in order to make the code compatible with the older version of gym.
