@@ -64,6 +64,11 @@ def get_model_type(filepath):
     model_type = model_path_parts[-2]
     return model_type
 
+def get_model_type_from_filename(filename):
+    filename_parts = filename.split("_")
+    model_type = filename_parts[-2]
+    return model_type
+
 
 def get_env(filename):
     filename_parts = filename.split("_")
