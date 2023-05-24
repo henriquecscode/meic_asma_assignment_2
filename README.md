@@ -17,8 +17,15 @@ For running refer to the section [Training and using models](#training-and-using
 
 ## Logs visualization
 
-To analyse the data you must have tensorboard installed.
-Run `tensorboard --logdir=logs`
+### Tensorboard
+
+To analyse the data with tensorboard you first must have it installed.
+Then run `tensorboard --logdir=logs`
+The logs will be available at `localhost:6006` and you will be able to see the graphs and other information.
+
+### Analytical data
+
+You can run the jupyter notebook `analysis.ipynb` to see some tabular information
 
 
 ## Version compatibility
